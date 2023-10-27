@@ -19,11 +19,24 @@ namespace GameChat
             return $"Player {id}";
         }
 
-        [ServerRpc(Delivery = RpcDelivery.Reliable, RequireOwnership = true)]
-        public void SendChatMessageServerRpc(string message, ServerRpcParams rpcParams = default)
+        [ServerRpc(Delivery = RpcDelivery.Reliable, RequireOwnership = false)]
+        public void SendChatMessageServerRpc(ChatMessage message, ServerRpcParams rpcParams = default)
         {
             var senderId = rpcParams.Receive.SenderClientId;
-            BroadcastChatMessageClientRpc(new ChatMessage(GetUserName(senderId), message));
+            message.sender = GetUserName(senderId);
+            switch (message.mode)
+            {
+                // not implemented
+                case ChatMessageMode.All:
+                case ChatMessageMode.Area:
+                case ChatMessageMode.Party:
+                case ChatMessageMode.Person:
+                    break;
+                default:
+                    break;
+            }
+
+            BroadcastChatMessageClientRpc(message);
         }
 
         [ClientRpc(Delivery = RpcDelivery.Reliable)]

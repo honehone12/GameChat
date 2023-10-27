@@ -18,7 +18,7 @@ namespace GameChat
         ChatCenter chatCenter;
 
         bool isActive;
-        ChatMessageMode chatMode;
+        ChatMessageMode messageMode;
 
         void Awake()
         {
@@ -31,14 +31,16 @@ namespace GameChat
         void OnEnable()
         {
             isActive = uiRoot.activeInHierarchy;
-            chatMode = ChatMessageMode.All;
+            messageMode = ChatMessageMode.All;
         }
 
         void Start()
         {
             chatMessageList.Add(new ChatMessage(
                 "GameChat Dev",
-                "Welcome to GameChat !!"
+                "Welcome to GameChat !!",
+                ChatMessageMode.Person,
+                System.Array.Empty<ulong>()
             ));
         }
 
@@ -48,7 +50,7 @@ namespace GameChat
             uiRoot.SetActive(isActive);
         }
 
-        public void OnChatModeChanged(int option)
+        public void OnMessageModeChanged(int option)
         {
             switch (option)
             {
@@ -56,7 +58,7 @@ namespace GameChat
                 case 1:
                 case 2:
                 case 3:
-                    chatMode = (ChatMessageMode)option;
+                    messageMode = (ChatMessageMode)option;
                     break;
                 default:
                     break;
@@ -65,7 +67,7 @@ namespace GameChat
 
         public void OnMessageEdit(string text)
         {
-            chatCenter.SendChatMessage(text);
+            chatCenter.SendChatMessage(text, messageMode);
             inputField.text = string.Empty;
         }
 
